@@ -3,4 +3,4 @@ project(cplusplus_template)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(cplusplus_template main.cpp)
+add_executable(cplusplus_template main.cpp common.h Container.h typename.h)

@@ -3,96 +3,65 @@
 #include <memory>
 #include <vector>
 #include <list>
+#include "common.h"
+#include "Container.h"
+#include "typename.h"
 using namespace std;
 
-//默认模板参数
-template <class T, size_t N = 100>
-class Stack{
-    T data[N];
-    size_t count;
-public:
-    void push(const T& t)
-    {
-
-    }
-};
-
-//Array容器类型
-template <class T>
-class Array{
-    enum { INIT = 10 };
-    T* data;
-    size_t  capacity;
-    size_t  count;
-public:
-    Array()
-    {
-        count = 0;
-        capacity = INIT;
-        data = new T[capacity];
-    }
-
-    virtual ~Array() {
-        count = 0;
-        capacity = INIT;
-        delete[] data;
-    }
-
-    void push_back(const T& t)
-    {
-        if(count == capacity)
-        {
-            //容量扩大一倍
-            size_t newCap = 2 * capacity;
-            T*  newData = new T[capacity];
-            for (size_t i = 0; i < count; ++i) {
-                newData[i] = data[i];
-            }
-
-            delete []data;
-            data = newData;
-            capacity = newCap;
-        }
-        data[count++] = t;
-    }
-
-    void pop_back()
-    {
-        if(count > 0)
-            count--;
-    }
-
-    T* begin() { return data; }
-    T* end() { return data + count; }
-};
-
-//想将第二个参数传递为标准容器，如list，vector
-template <class T, template <class U, class = allocator<U> > class Seq >
-class Container{
-    Seq<T> seq;
-public:
-    void append(const T& t)
-    {
-        seq.push_back(t);
-    }
-
-    //容器中的begin和end函数返回的是迭代器iterator类型
-    typename Seq<T>::iterator begin() { return seq.begin(); }
-    typename Seq<T>::iterator end() { return seq.end(); }
-};
-
+///////////////////////////////////技术点//////////////////////////////////////////////
 //1.可以为模板的所有参数都提供默认值，但声明一个实例时必须使用一堆空的尖括号，这样编译器就知道说明了一个类模板
 //2.模板参数可以是另一个模板
+void test_typename()
+{
+    X<Y> xy;
+    xy.f();
+}
+
+template <class T,template <class U, class = allocator<U> > class Seq>
+void printSeq(Seq<T>& seq)
+{
+    //这里要求iterator是类型，所以需要加typename
+    for (typename Seq<T>::iterator p = seq.begin(); p != seq.end(); p++) {
+        cout<< *p <<endl;
+    }
+}
+
+void test_print_stl_container()
+{
+    vector<int> v;
+    v.push_back(1);
+    v.push_back(2);
+    printSeq(v);
+
+    list<double > lst;
+    lst.push_back(1.2);
+    lst.push_back(3.4);
+    printSeq(lst);
+}
+
 int main() {
+    //use a vector
     Container<int, vector> container;
-    container.append(1);
-    container.append(2);
+    container.push_back(1);
+    container.push_back(2);
     auto p = container.begin();
     while(p != container.end())
     {
         cout << *p++ << endl;
     }
 
+    //use a list
+    Container<int, list> lContainer;
+    lContainer.push_back(3);
+    lContainer.push_back(4);
+    for(list<int>::iterator p2 = lContainer.begin(); p2 != lContainer.end(); p2++)
+    {
+        cout<< *p2 <<endl;
+    }
+
+    test_typename();
+
+    test_print_stl_container();
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }
