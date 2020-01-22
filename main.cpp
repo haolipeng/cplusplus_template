@@ -39,6 +39,24 @@ void test_print_stl_container()
     printSeq(lst);
 }
 
+#include <bitset>
+#include <string>
+template <class charT, size_t N>
+basic_string<charT> bitsetToString(const bitset<N>& bs){
+    return bs. template to_string<charT, char_traits<charT>, allocator<charT> >();
+}
+
+void test_biset_tostring()
+{
+    bitset<10> bs;
+    bs.set(1);
+    bs.set(5);
+    cout<< bs <<endl;
+
+    string s = bitsetToString<char>(bs);
+    cout << s <<endl;
+}
+
 int main() {
     //use a vector
     Container<int, vector> container;
@@ -62,6 +80,9 @@ int main() {
     test_typename();
 
     test_print_stl_container();
+
+    test_biset_tostring();
+
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }
