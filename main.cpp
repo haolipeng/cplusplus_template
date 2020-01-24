@@ -219,6 +219,13 @@ int main() {
     test_multi_min_function();
 
     test_operator();
+
+    //cow技术，标准字符串
+    //读时，用共享的方式
+    //写时，用复制的方式
+    //调用[]的对象是一个常量字符串(对象)，5个人在共享，也不需要复制。
+
+    //写个class，会看下基础是否扎实？
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }

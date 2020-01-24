@@ -29,4 +29,16 @@ template关键字后面和class关键字后面的尖括号里都是非空的参�
 6.类模板的半有序
 选用哪个类模板进行实例化的规则，类似于函数模板中的半有序规则--应该选择“特化程度最高”的模板
 
+7.const 成员函数
+当成员函数的const和non-const版本同时存在时.
+const object只会（只能）调用const版本
+non-const object只会（只能）调用non-const版本
+只能和只能，两个词，比较敏感。
+
+如果确定某成员函数不会改变成员变量，那么在成员函数后加const更合适的。
+举例：
+string的两个函数
+operator []() const
+operator []()
+
 
