@@ -6,22 +6,25 @@
 #include "common.h"
 #include "Container.h"
 #include "typename.h"
+#include "multi_version_min.h"
 using namespace std;
 
 ///////////////////////////////////技术点//////////////////////////////////////////////
 //1.可以为模板的所有参数都提供默认值，但声明一个实例时必须使用一堆空的尖括号，这样编译器就知道说明了一个类模板
 //2.模板参数可以是另一个模板
+// 测试typename的用法，告诉编译器此标识符是一个类型
 void test_typename()
 {
     X<Y> xy;
     xy.f();
 }
 
+//打印stl容器中的值
 template <class T,template <class U, class = allocator<U> > class Seq>
 void printSeq(Seq<T>& seq)
 {
     //这里要求iterator是类型，所以需要加typename
-    for (typename Seq<T>::iterator p = seq.begin(); p != seq.end(); p++) {
+    for (auto p = seq.begin(); p != seq.end(); p++) {
         cout<< *p <<endl;
     }
 }
@@ -81,6 +84,7 @@ void init2(T (&a) [R][C])
     }
 }
 
+//测试通过函数参数推导出数组的维数
 void test_ref_array()
 {
     int a[10][20];
@@ -88,7 +92,22 @@ void test_ref_array()
     init2(a);
 }
 
-int main() {
+//测试不同版本的min函数
+void test_multi_min_function()
+{
+    const char* s1 = "knights who";
+    const char* s2 = "say hello";
+
+    cout<< TEMPLATE_MIN::min(1,2) <<endl;
+    cout<< TEMPLATE_MIN::min(1.0 ,2.0) <<endl;
+    cout<< TEMPLATE_MIN::min(1 ,2.0) <<endl;
+    cout<< TEMPLATE_MIN::min(s1, s2) <<endl;
+    cout<< TEMPLATE_MIN::min<>(s1, s2) <<endl;//加上空尖括号强迫编译器使用模板，因为生成一个const char*模板来使用
+}
+
+//以stl容器为模板参数的类模板
+void test_use_vector_list()
+{
     //use a vector
     Container<int, vector> container;
     container.push_back(1);
@@ -103,16 +122,67 @@ int main() {
     Container<int, list> lContainer;
     lContainer.push_back(3);
     lContainer.push_back(4);
-    for(list<int>::iterator p2 = lContainer.begin(); p2 != lContainer.end(); p2++)
+    for(int & p2 : lContainer)
     {
-        cout<< *p2 <<endl;
+        cout<< p2 <<endl;
     }
+}
+
+namespace My
+{
+    template <class T1, class T2>
+    struct pair{
+        typedef T1 first_type;
+        typedef T2 second_type;
+
+        T1 first;
+        T2 second;
+
+        pair():first(T1()), second(T2()) {
+
+        }
+
+        pair(const T1& a, const T2& b):first(a),second(b){
+
+        }
+
+        template <class U1, class U2>
+        explicit pair(const pair<U1, U2>& p) :first(p.first), second(p.second) {}
+    };
+}
+
+//鱼类
+class Fish{
+
+};
+
+//鸟类
+class Bird{
+
+};
+
+//鲫鱼
+class Catfish : public Fish{
+
+};
+
+//麻雀
+class Sparrow : public Bird{
+
+};
+
+int main() {
+    My::pair<Fish, Bird> p2(My::pair<Catfish, Sparrow>());
+
+    test_use_vector_list();
 
     test_typename();
 
     test_print_stl_container();
 
     test_biset_tostring();
+
+    test_multi_min_function();
 
     std::cout << "Hello, World!" << std::endl;
     return 0;

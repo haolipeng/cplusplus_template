@@ -8,4 +8,5 @@ typedef typename Seq<T>::iterator It;
 
 2.用typename代替class
 
-3.
+3.class template,function template,member template
+4.模板特化
