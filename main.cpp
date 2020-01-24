@@ -29,6 +29,27 @@ void printSeq(Seq<T>& seq)
     }
 }
 
+class Test{
+public:
+    void operator() ()
+    {
+        cout<< "void operator() ()" <<endl;
+    }
+
+    void operator() (const char* pStr)
+    {
+        cout<< "void operator() (const char* pStr)" <<endl;
+    }
+};
+
+void test_operator()
+{
+    Test test;
+    test();
+    test("haolipeng");
+    cout<<"test_operator() end"<<endl;
+}
+
 void test_print_stl_container()
 {
     vector<int> v;
@@ -171,6 +192,19 @@ class Sparrow : public Bird{
 
 };
 
+//类模板的半有序
+#include "partialOrder.h"
+void test_partial_order()
+{
+    C<float,int>().f();//Primary Template
+    C<int,float>().f();//T == int
+    C<float,double>().f();//U == double
+    C<float,float>().f();//T == U
+    C<float*,float>().f();//T* used
+    C<float,float*>().f();//U* used
+    C<float*,int*>().f();//T* and U* used
+}
+
 int main() {
     My::pair<Fish, Bird> p2(My::pair<Catfish, Sparrow>());
 
@@ -184,6 +218,7 @@ int main() {
 
     test_multi_min_function();
 
+    test_operator();
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }
