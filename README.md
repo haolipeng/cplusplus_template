@@ -41,4 +41,5 @@ string的两个函数
 operator []() const
 operator []()
 
-
+8.mutable修饰符
+被mutable修饰的类的成员变量，可以在const成员函数中修改（如不加mutable，是不能修改const成员变量的）
